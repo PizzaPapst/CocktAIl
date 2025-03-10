@@ -1,14 +1,28 @@
 import FileUpload from './Components/FileUpload';
 import './Styles/App.css';
 import { useState, useEffect } from 'react';
+import { getCocktailById, getCocktailByingredient } from './Api';
+import { getIngredient } from './Thesaurus.js';
+
+console.log(getIngredient("ORANGE"));          // "orange juice"
+console.log(getIngredient("ORANGENSAFT"));     // "orange juice"
+console.log(getIngredient("MILCH"));           // "milk"
+console.log(getIngredient("BANANEN"));         // "banana"
+console.log(getIngredient("WATER"));           // "Unbekannte Zutat"
+
+
+
 
 function App() {
 
+  
   const [picture, setPicture] = useState(null);
 
 // Bild Analysieren
 async function analyzeImage(file) {
-  const apiKey = "AIzaSyB6nO6n89XzqbSPJzjts94SWoCT0tmt47s";
+  const apiKey = process.env.REACT_APP_API_KEY;
+  console.log(apiKey);
+
   const url = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
 
   // Bild als Base64 konvertieren
@@ -64,8 +78,11 @@ useEffect(() => {
   async function main() {
     const description = await analyzeImage(picture);
     console.log(description); // Ergebnisse der Analyse
+    description.forEach(element => {
+      console.log("Zutat: " + getIngredient(element.description))
+    });
   }
-
+  
   main();
 }, [picture]); // useEffect wird jedes Mal ausgeführt, wenn sich picture ändert
 

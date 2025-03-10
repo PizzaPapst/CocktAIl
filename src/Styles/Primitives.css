@@ -1,0 +1,21 @@
+:root {
+    /* Neutral Colors */
+    --neutral-100: #FAFAFA;
+    --neutral-200: #DBDBDB;
+    --neutral-300: #757575;
+    --neutral-400: #595959;
+    --neutral-500: #2C2C2C;
+    --neutral-white: #FFFFFF;
+  
+    /* Red Colors */
+    --red-100: #F88E81;
+    --red-200: #C67267;
+    --red-300: #FF2800;
+  
+    /* Green Colors */
+    --green-100: #00AE19;
+  
+    /* Yellow/Orange Colors */
+    --yellow-100: #FFB01D;
+  }
+  

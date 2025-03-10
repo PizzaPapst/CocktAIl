@@ -1,0 +1,26 @@
+@import url('./Primitives.css');
+
+:root {
+    /* Primary Tokens */
+    --primary: var(--red-100);
+    --primary-border: var(--red-200);
+  
+    /* Success Tokens */
+    --success: var(--green-100);
+  
+    /* Warning Tokens */
+    --warning: var(--yellow-100);
+  
+    /* Danger Tokens */
+    --danger: var(--red-300);
+  
+    /* Text Tokens */
+    --text-default: var(--neutral-500);
+    --text-secondary: var(--neutral-300);
+    --text-label: var(--neutral-400);
+
+    /* Default Tokens */
+    --border: var(--neutral-200);
+    --surface: var(--neutral-100);
+  }
+  

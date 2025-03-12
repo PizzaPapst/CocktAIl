@@ -1,28 +1,20 @@
 import FileUpload from './Components/FileUpload';
 import './Styles/App.css';
 import { useState, useEffect } from 'react';
-import { getCocktailById, getCocktailByingredient } from './Api';
 import { getIngredient } from './Thesaurus.js';
-
-console.log(getIngredient("ORANGE"));          // "orange juice"
-console.log(getIngredient("ORANGENSAFT"));     // "orange juice"
-console.log(getIngredient("MILCH"));           // "milk"
-console.log(getIngredient("BANANEN"));         // "banana"
-console.log(getIngredient("WATER"));           // "Unbekannte Zutat"
-
-
-
+import { object } from './Testobject.js';
+import { findCocktails } from './findCocktails.js';
 
 function App() {
 
-  
   const [picture, setPicture] = useState(null);
+  const [ingredients, setIngredients] = useState(null);
+  const [cocktails, setCocktails] = useState(null);
+  
 
 // Bild Analysieren
 async function analyzeImage(file) {
   const apiKey = process.env.REACT_APP_API_KEY;
-  console.log(apiKey);
-
   const url = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
 
   // Bild als Base64 konvertieren
@@ -47,7 +39,7 @@ async function analyzeImage(file) {
   });
 
   const result = await response.json();
-  //console.log(result);
+  console.log(result.responses[0].textAnnotations);
   return result.responses[0].textAnnotations; // Beschreibungen des Bildes
 }
 
@@ -70,58 +62,78 @@ function onUpload(file){
   }
 }
 
-// Funktion zur Bildanalyse starten, wenn das Bild geändert wird
+// Bild Analysieren wenn ein neues Bild hochgeladen wird und Zutaten herausfiltern
 useEffect(() => {
   // Falls picture null ist, nichts tun
   if (!picture) return;
-
-  async function main() {
-    const description = await analyzeImage(picture);
-    console.log(description); // Ergebnisse der Analyse
+      
+  analyzeImage(picture)
+  .then((description) => {
+    const ingredientsSet = new Set();
     description.forEach(element => {
-      console.log("Zutat: " + getIngredient(element.description))
-    });
-  }
-  
-  main();
-}, [picture]); // useEffect wird jedes Mal ausgeführt, wenn sich picture ändert
-
-
-
-async function fetchCocktails() {
-  const ingredient = "cranberry juice"; // Statische Zutat
-  const url = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${ingredient}`;
-
-  try {
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log("Gefundene Cocktails:", data.drinks); // Ausgabe in der Konsole
-  } catch (error) {
-      console.error("Fehler beim Abrufen der Cocktails:", error);
-  }
-}
-
-async function fetchCocktailDetails(cocktailId) {
-  const url = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${11064}`;
-
-  try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.drinks && data.drinks.length > 0) {
-          console.log("Cocktail-Details:", data.drinks[0]);
-      } else {
-          console.log("Keine Details für diesen Cocktail gefunden.");
+      const ingredient = getIngredient(element.description);
+      if (ingredient) {
+        ingredientsSet.add(ingredient);
       }
-  } catch (error) {
-      console.error("Fehler beim Abrufen der Cocktail-Details:", error);
-  }
-}
+    });
+
+    const ingredientsArray = Array.from(ingredientsSet);
+    setIngredients(ingredientsArray);
+  })  
+}, [picture]);
+
+// Wenn Zutaten sich ändern dazugehörige cocktails suchen
+useEffect(()=>{
+  if (!ingredients) return;
+
+  console.log(ingredients)
+  findCocktails(ingredients)
+  .then((cocktailResponse) => {
+    const cocktailsSorted = []
+    // Schlüssel des Objektes absteigend sortieren. Mit dem Cocktail, welcher die meisten Zutaten abdeckt starten 
+    const array = Object.keys(cocktailResponse)
+      .map(Number)
+      .sort((a, b) => b - a);
+    
+    array.forEach((element)=>{
+      cocktailsSorted.push(cocktailResponse[element])
+    }) 
+
+    setCocktails(cocktailsSorted.flat())
+      
+  });
+},[ingredients])
+
+// useEffect wird jedes Mal ausgeführt, wenn sich picture ändert
+
+// useEffect(() => {
+//   async function main() {
+    
+//     const description = object;
+//     const ingredientsSet = new Set(); // Set speichert nur einzigartige Werte
+
+//     description.forEach(element => {
+//       const ingredient = getIngredient(element.description);
+//       if (ingredient) {
+//         ingredientsSet.add(ingredient); // Automatisch keine Duplikate
+//       }
+//     });
+    
+//     const ingredients = Array.from(ingredientsSet); // Set zurück in Array umwandeln
+//     console.log(ingredients);
+
+//     const cocktails = await findCocktails(ingredients)
+//     console.log(cocktails)
+//   }
+
+//   main();
+// }, []);
   
   return (
     <div className="App">
       <h1>Cocktails finden</h1>
       <FileUpload onUpload={onUpload}/>
+      {cocktails && <div>Cocktails geladen</div>}
     </div>
   );
 }

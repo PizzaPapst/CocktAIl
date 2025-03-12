@@ -21,8 +21,8 @@ export async function getCocktailByingredient(ingredient) {
   try {
       const response = await fetch(url);
       const data = await response.json();
-      console.log("Gefundene Cocktails:", data.drinks);
-      return data; 
+      //console.log("Gefundene Cocktails:", data.drinks);
+      return data.drinks; 
   } catch (error) {
       console.error("Fehler beim Abrufen der Cocktails:", error);
   }

@@ -1,12 +1,12 @@
 export async function getCocktailById(id) {
-    const url = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${11064}`;
+    const url = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
 
   try {
       const response = await fetch(url);
       const data = await response.json();
 
       if (data.drinks && data.drinks.length > 0) {
-          console.log("Cocktail-Details:", data.drinks[0]);
+          return data.drinks[0];
       } else {
           console.log("Keine Details für diesen Cocktail gefunden.");
       }

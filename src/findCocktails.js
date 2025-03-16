@@ -32,7 +32,8 @@ export async function findCocktails(ingredients) {
     return groupedCocktails;
 }
 
-export async function getCocktailDetails(id, ingredients) {
+export async function getCocktailDetails(id) {
+    const cocktailDetail = await getCocktailById(id)
     
-    
+    return cocktailDetail
 }

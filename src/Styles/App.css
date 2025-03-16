@@ -1,3 +1,16 @@
 .App{
   background-color: var(--surface);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+  width: 393px;
+  height: 100%;
+}
+
+.ingredients-list{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
 }

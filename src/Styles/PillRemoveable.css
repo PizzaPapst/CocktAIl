@@ -1,0 +1,11 @@
+.pill-removeable{
+    height: 28px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 8px;
+    background-color: #FBF1EF;
+    border-radius: 999px;
+    border: 1px solid var(--primary-border);
+}
+

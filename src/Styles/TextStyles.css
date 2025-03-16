@@ -5,3 +5,15 @@
     font-style: normal;
     color: var(--text-default);
 }
+
+.label{
+    color: var(--text-label);
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.cocktail-title{
+    font-family: Raleway;
+    font-size: 24px;
+    font-weight: 700;
+}

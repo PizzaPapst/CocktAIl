@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import { getIngredient } from './Thesaurus.js';
 import { object } from './Testobject.js';
 import { findCocktails } from './findCocktails.js';
+import CocktailCard from './Components/CocktailCard.js';
+import PillRemoveable from './Components/PillRemoveable.js';
 
 function App() {
 
   const [picture, setPicture] = useState(null);
   const [ingredients, setIngredients] = useState(null);
   const [cocktails, setCocktails] = useState(null);
+  const [cocktailIndex, setCocktailIndex] = useState(0);
   
 
 // Bild Analysieren
@@ -99,41 +102,56 @@ useEffect(()=>{
       cocktailsSorted.push(cocktailResponse[element])
     }) 
 
+    console.log(cocktailsSorted.flat())
     setCocktails(cocktailsSorted.flat())
+    setCocktailIndex(0)
       
   });
 },[ingredients])
 
-// useEffect wird jedes Mal ausgeführt, wenn sich picture ändert
-
-// useEffect(() => {
-//   async function main() {
-    
-//     const description = object;
-//     const ingredientsSet = new Set(); // Set speichert nur einzigartige Werte
-
-//     description.forEach(element => {
-//       const ingredient = getIngredient(element.description);
-//       if (ingredient) {
-//         ingredientsSet.add(ingredient); // Automatisch keine Duplikate
-//       }
-//     });
-    
-//     const ingredients = Array.from(ingredientsSet); // Set zurück in Array umwandeln
-//     console.log(ingredients);
-
-//     const cocktails = await findCocktails(ingredients)
-//     console.log(cocktails)
-//   }
-
-//   main();
-// }, []);
+const removeIngredient = (indexToRemove) => {
+  setIngredients(ingredients.filter((_, index) => index !== indexToRemove));
+};
   
   return (
     <div className="App">
-      <h1>Cocktails finden</h1>
-      <FileUpload onUpload={onUpload}/>
-      {cocktails && <div>Cocktails geladen</div>}
+      {!cocktails && <h1>Cocktails finden</h1>}
+      {!cocktails && <FileUpload onUpload={onUpload}/>}
+      {cocktails && <p className='label'>Zutaten</p>}
+      {cocktails && 
+        <div className='ingredients-list'>
+            {ingredients.map((item, index) => (
+              <PillRemoveable
+                key={index}
+                text={item}
+                onRemove={() => removeIngredient(index)}
+              />
+      ))}
+        </div>
+      }
+      
+      {cocktails && <CocktailCard key={cocktailIndex} id={cocktails[cocktailIndex]} userIngredients={ingredients} />}
+      {cocktails && <button onClick={()=>{
+        if(cocktailIndex === 0){
+          setCocktailIndex(cocktails.length-1)
+          console.log(cocktailIndex)
+        }else{
+          setCocktailIndex((prev)=>prev-1)
+          console.log(cocktailIndex)
+
+        }
+      }}>Prev</button>}
+      
+      {cocktails && <button onClick={()=>{
+        if(cocktailIndex === cocktails.length){
+          setCocktailIndex(0)
+          console.log(cocktailIndex)
+        }else{
+          setCocktailIndex((prev)=>prev+1)
+          console.log(cocktailIndex)
+
+        }
+      }}>Next</button>}
     </div>
   );
 }
